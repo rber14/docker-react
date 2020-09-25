@@ -6,7 +6,7 @@ FROM node:alpine as builder
 
 WORKDIR '/app'
 
-COPY package.json .
+COPY package.json ./
 
 RUN npm install
 
@@ -23,7 +23,8 @@ FROM nginx
 # futher, elastic beanstalk sees this and maps the port for incomming traffic
 EXPOSE 80
 # copy over from builder (only what we need) and specify what folder and to which folder in nginx
-COPY --from=builder /app/build /usr/share/nginx/html
+# COPY --from=builder /app/build /usr/share/nginx/html
+COPY --from=0 /app/build /usr/share/nginx/html
 
 
 

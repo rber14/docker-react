@@ -16,3 +16,20 @@ script:
 # default run but waits for user input, so we want to add more command
   - docker run -e CI=true rcamposs/docker-react npm run test
 
+# more config to deploy to aws
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-west-1"
+  app: "docker-react"
+  env: "DockerReact-env"
+  # takes all files zips and puts them into a bucket
+  # so we need name of bucket we need to put zip file in 
+  bucket_name: "elasticbeanstalk-us-west-1-431380101178"
+  bucket_path: "docker"
+  # anytime we push to master we wish to deploy
+  on:
+    branch: master
+  access_key_id:  $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"

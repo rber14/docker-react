@@ -1,0 +1,18 @@
+language: generic
+# we need super user permissions anytime we are using docker to execute this build
+sudo: required
+
+# need a copy of docker
+services: 
+    - docker
+
+# happens before test ran - steps that need to happen before deployment or test run
+before_install:
+    - docker build -t rcamposs/docker-react -f Dockerfile.dev .
+
+# all diff commands to run test suite 
+# travis watches 
+script:
+# default run but waits for user input, so we want to add more command
+  - docker run -e CI=true rcamposs/docker-react npm run test
+

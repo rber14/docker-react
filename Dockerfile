@@ -2,11 +2,11 @@
 
 # as builder is a tag - for our 'build phase'
 # this is our builder step for our muilt step docker build
-FROM node:alpine as builder
+FROM node:alpine 
 
 WORKDIR '/app'
 
-COPY package.json ./
+COPY package*.json ./
 
 RUN npm install
 

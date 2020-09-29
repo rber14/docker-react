@@ -8,7 +8,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          I was changed on the feature branch!
+          past change was a feature branch this change is starting from terminal cd into folder and running docker-compose up commnad, change again
         </p>
         <a
           className="App-link"

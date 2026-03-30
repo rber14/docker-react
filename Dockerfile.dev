@@ -1,0 +1,21 @@
+
+# Dockerfile.dev
+
+FROM node:18-alpine
+
+# Set working directory inside container
+WORKDIR /app
+
+# Install dependencies first (only package.json + lock file)
+COPY package.json package-lock.json* yarn.lock* ./
+
+RUN npm install
+
+# Copy the rest of the app (optional for dev, but harmless)
+COPY . .
+
+# Expose port for React dev server
+EXPOSE 3000
+
+# Start the development server
+CMD ["npm", "start"]

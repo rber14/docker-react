@@ -23,6 +23,9 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Build, tag, and push Docker image
         run: |
           IMAGE_TAG=$(date +%s)
@@ -30,7 +33,7 @@ jobs:
           docker build -t ${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG .
           docker tag ${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
           docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
- 
+
       - name: Update Dockerrun.aws.json with new image
         run: |
           IMAGE="${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:${IMAGE_TAG}"
@@ -57,7 +60,6 @@ jobs:
             --application-name "${{ secrets.EB_APP_NAME }}" \
             --version-label "$IMAGE_TAG" \
             --source-bundle S3Bucket="$BUCKET",S3Key="deploy-$IMAGE_TAG.zip"
-
 
       - name: Deploy to Elastic Beanstalk
         run: |

@@ -38,18 +38,24 @@ jobs:
       - name: Create deployment bundle
         run: zip -r deploy.zip Dockerrun.aws.json
 
+      - name: Extract AWS account ID
+        run: |
+          ACCOUNT_ID=$(echo "${{ steps.login-ecr.outputs.registry }}" | cut -d'.' -f1)
+          echo "ACCOUNT_ID=$ACCOUNT_ID" >> $GITHUB_ENV
+
       - name: Upload bundle to S3
         run: |
-          BUCKET="elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ steps.login-ecr.outputs.registry%%.* }}"
+          BUCKET="elasticbeanstalk-${{ secrets.AWS_REGION }}-${ACCOUNT_ID}"
           aws s3 cp deploy.zip s3://$BUCKET/deploy-$IMAGE_TAG.zip
 
       - name: Create new EB application version
         run: |
-          BUCKET="elasticbeanstalk-${{ secrets.AWS_REGION }}-${{ steps.login-ecr.outputs.registry%%.* }}"
+          BUCKET="elasticbeanstalk-${{ secrets.AWS_REGION }}-${ACCOUNT_ID}"
           aws elasticbeanstalk create-application-version \
             --application-name "${{ secrets.EB_APP_NAME }}" \
             --version-label "$IMAGE_TAG" \
             --source-bundle S3Bucket="$BUCKET",S3Key="deploy-$IMAGE_TAG.zip"
+
 
       - name: Deploy to Elastic Beanstalk
         run: |
